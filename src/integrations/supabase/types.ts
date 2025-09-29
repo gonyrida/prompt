@@ -14,7 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      resources: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          url: string
+          type: 'video' | 'book' | 'doc' | 'pdf' | 'article'
+          language: string
+          framework: string | null
+          difficulty: 'beginner' | 'intermediate' | 'advanced'
+          tags: string[]
+          author: string | null
+          rating: number | null
+          bookmarked: boolean
+          user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          url: string
+          type: 'video' | 'book' | 'doc' | 'pdf' | 'article'
+          language?: string
+          framework?: string | null
+          difficulty?: 'beginner' | 'intermediate' | 'advanced'
+          tags?: string[]
+          author?: string | null
+          rating?: number | null
+          bookmarked?: boolean
+          user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          url?: string
+          type?: 'video' | 'book' | 'doc' | 'pdf' | 'article'
+          language?: string
+          framework?: string | null
+          difficulty?: 'beginner' | 'intermediate' | 'advanced'
+          tags?: string[]
+          author?: string | null
+          rating?: number | null
+          bookmarked?: boolean
+          user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_favorites: {
+        Row: {
+          id: string
+          user_id: string
+          resource_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          resource_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          resource_id?: string
+          created_at?: string
+        }
+      }
+      user_profiles: {
+        Row: {
+          id: string
+          username: string | null
+          full_name: string | null
+          avatar_url: string | null
+          bio: string | null
+          preferences: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          preferences?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          preferences?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      chat_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          title: string | null
+          messages: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title?: string | null
+          messages?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string | null
+          messages?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

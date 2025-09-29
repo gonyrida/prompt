@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Github, Upload, User, Menu } from "lucide-react";
+import { Moon, Sun, Github, Upload, User, Menu, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/use-supabase";
+import { AuthModal } from "./AuthModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   onNavigate?: (section: string) => void;
@@ -12,10 +20,27 @@ interface HeaderProps {
 export const Header = ({ onNavigate }: HeaderProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (!mounted) {
     return null;
@@ -65,6 +90,14 @@ export const Header = ({ onNavigate }: HeaderProps) => {
           >
             Latest
           </button>
+          {user && (
+            <a 
+              href="/my-resources"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              My Resources
+            </a>
+          )}
         </nav>
 
         {/* Actions */}
@@ -88,6 +121,9 @@ export const Header = ({ onNavigate }: HeaderProps) => {
                     <Button variant="ghost" className="justify-start" onClick={() => onNavigate?.('categories')}>Categories</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => onNavigate?.('popular')}>Popular</Button>
                     <Button variant="ghost" className="justify-start" onClick={() => onNavigate?.('latest')}>Latest</Button>
+                    {user && (
+                      <Button variant="ghost" className="justify-start" onClick={() => window.location.href = '/my-resources'}>My Resources</Button>
+                    )}
                   </div>
                   <div className="border-t my-2" />
                   <div className="flex items-center gap-2">
@@ -105,20 +141,29 @@ export const Header = ({ onNavigate }: HeaderProps) => {
                       <Upload className="h-4 w-4" />
                       Add Resource
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                      onClick={() =>
-                        toast({
-                          title: "Sign in",
-                          description: "Authentication is not wired yet.",
-                        })
-                      }
-                    >
-                      <User className="h-4 w-4" />
-                      Sign In
-                    </Button>
+                    {user ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <User className="h-4 w-4" />
+                            {user.email}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem onClick={handleSignOut}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sign Out
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <AuthModal>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <User className="h-4 w-4" />
+                          Sign In
+                        </Button>
+                      </AuthModal>
+                    )}
                   </div>
                 </div>
               </SheetContent>
@@ -154,20 +199,29 @@ export const Header = ({ onNavigate }: HeaderProps) => {
             <span className="hidden md:inline">Add Resource</span>
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() =>
-              toast({
-                title: "Sign in",
-                description: "Authentication is not wired yet.",
-              })
-            }
-          >
-            <User className="h-4 w-4" />
-            <span className="hidden md:inline">Sign In</span>
-          </Button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:inline">{user.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <AuthModal>
+              <Button variant="outline" size="sm" className="gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden md:inline">Sign In</span>
+              </Button>
+            </AuthModal>
+          )}
 
           <Button
             variant="ghost"

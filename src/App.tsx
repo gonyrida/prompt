@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 import Chat from "./pages/Chat";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
+import { MyResources } from "./pages/MyResources";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,14 @@ const App = () => (
             <Route path="/chat" element={<Chat />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
+            <Route 
+              path="/my-resources" 
+              element={
+                <ProtectedRoute>
+                  <MyResources />
+                </ProtectedRoute>
+              } 
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
